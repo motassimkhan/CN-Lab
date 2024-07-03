@@ -8,7 +8,7 @@ int main(){
     printf("Databits before bit stuffing: %s\n",databits);
     printf("Databits after bit stuffing: \n");
     for(i=0;i<strlen(databits);i++){
-        if(databits[i] = '1')
+        if(databits[i] == '1')
         count++;
         else
         count = 0;
