@@ -1,14 +1,26 @@
- strcat(fs, x);
-    for (i = 0; i < strlen(a); i++)
-    {
-        t[0] = a[i];
-        t[1] = '\0';
-        if (t[0] == sd)
-        {
-            strcat(fs, s); // Insert ending delimiter before the character
-        }
-        else if(t[0] == ed){
-                strcat(fs,d);
-        }
-        strcat(fs, t); // Insert the character
+#include <netdb.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    struct hostent *h;
+    char dom[50];
+    if (dom == NULL) {
+        printf("Error: field cannot be empty");
+        exit(1);
     }
+
+    if ((h = gethostbyname(dom)) == NULL) {
+        perror("gethostbyname");
+        exit(1);
+    }
+
+    printf("Host name : %s\n", h->h_name);
+    printf("IP Address : %s\n", inet_ntoa(*((struct in_addr *)h->h_addr)));
+
+    return 0;
+}
