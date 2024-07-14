@@ -1,50 +1,78 @@
 #include <stdio.h>
 #include <string.h>
-
-#define N strlen(gen_poly)
-
-char data[28], check_value[28], gen_poly[10];
-int data_length, i, j;
-
-void XOR()
+void main()
 {
-    for (j = 1; j < N; j++)
-        check_value[j] = (check_value[j] == gen_poly[j]) ? '0' : '1';
-}
-
-void crc()
-{
-    for (i = 0; i < N; i++)
-        check_value[i] = data[i];
-    do
+    int i, j, keylen, msglen;
+    char input[100], key[30], temp[30], quot[100], rem[30], key1[30];
+    printf("Enter Data: ");
+    scanf("%s", input);
+    printf("Enter Key: ");
+    scanf("%s", key);
+    keylen = strlen(key);
+    msglen = strlen(input);
+    strcpy(key1, key);
+    // Append zeros to the input data
+    for (i = 0; i < keylen - 1; i++)
     {
-        if (check_value[0] == '1')
-            XOR();
-        memmove(check_value, check_value + 1, N - 1);
-        check_value[N - 1] = data[i++];
-    } while (i <= data_length + N - 1);
-}
-
-int main()
-{
-    printf("\nEnter data to be transmitted: ");
-    scanf("%s", data);
-    printf("\nEnter the Generating polynomial: ");
-    scanf("%s", gen_poly);
-
-    data_length = strlen(data);
-    for(int i = 1; i< strlen(gen_poly); i++)
-    {
-        strcat(data,"0");
+        input[msglen + i] = '0';
     }
-    //strcat(data, "0000000000" + 10 - (N - 1));
-
-    crc();
-
-    printf("\nCRC or Check value is: %s", check_value);
-    strncpy(data + data_length, check_value, N - 1);
-
-    printf("\nFinal data to be sent: %s\n", data);
-
-    return 0;
+    // Initialize temp with the initial part of input
+    for (i = 0; i < keylen; i++)
+    {
+        temp[i] = input[i];
+    }
+    // Perform CRC calculation
+    for (i = 0; i < msglen; i++)
+    {
+        quot[i] = temp[0];
+        if (quot[i] == '0')
+        {
+            for (j = 0; j < keylen; j++)
+            {
+                key[j] = '0';
+            }
+        }
+        else
+        {
+            for (j = 0; j < keylen; j++)
+            {
+                key[j] = key1[j];
+            }
+        }
+        for (j = keylen - 1; j > 0; j--)
+        {
+            if (temp[j] == key[j])
+            {
+                rem[j - 1] = '0';
+            }
+            else
+            {
+                rem[j - 1] = '1';
+            }
+        }
+        rem[keylen - 1] = input[i + keylen];
+        strcpy(temp, rem);
+    }
+    strcpy(rem, temp);
+    // Output quotient and remainder
+    printf("\nQuotient is ");
+    for (i = 0; i < msglen; i++)
+    {
+        printf("%c", quot[i]);
+    }
+    printf("\nRemainder is ");
+    for (i = 0; i < keylen - 1; i++)
+    {
+        printf("%c", rem[i]);
+    }
+    // Output final data
+    printf("\nFinal data is: ");
+    for (i = 0; i < msglen; i++)
+    {
+        printf("%c", input[i]);
+    }
+    for (i = 0; i < keylen - 1; i++)
+    {
+        printf("%c", rem[i]);
+    }
 }
