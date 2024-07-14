@@ -9,6 +9,8 @@
 int main() {
     struct hostent *h;
     char dom[50];
+    printf("enter the domain name: ");
+    scanf("%s",&dom);
     if (dom == NULL) {
         printf("Error: field cannot be empty");
         exit(1);
