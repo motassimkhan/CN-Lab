@@ -1,39 +1,46 @@
 #include <stdio.h>
 #include <string.h>
 
-#define POLYNOMIAL 0xD8  // 11011 followed by 0's
+#define N strlen(gen_poly)
 
-void calculateCRC(char data[], char crc[]) {
-    int len = strlen(data);
-    strcpy(crc, data); // Copy data to crc
-    for (int i = 0; i < len; i++) {
-        if (crc[i] == '1') { // If bit is 1, perform XOR with the polynomial
-            for (int j = 0; j < 8; j++) {
-                crc[i + j] = crc[i + j] == POLYNOMIAL >> (7 - j) & 1 ? '0' : '1';
-            }
-        }
-    }
+char data[28], check_value[28], gen_poly[10];
+int data_length, i, j;
+
+void XOR()
+{
+    for (j = 1; j < N; j++)
+        check_value[j] = (check_value[j] == gen_poly[j]) ? '0' : '1';
 }
 
-int main() {
-    char data[100], crc[108];
+void crc()
+{
+    for (i = 0; i < N; i++)
+        check_value[i] = data[i];
+    do
+    {
+        if (check_value[0] == '1')
+            XOR();
+        memmove(check_value, check_value + 1, N - 1);
+        check_value[N - 1] = data[i++];
+    } while (i <= data_length + N - 1);
+}
 
-    printf("Enter data: ");
+int main()
+{
+    printf("\nEnter data to be transmitted: ");
     scanf("%s", data);
+    printf("\nEnter the Generating polynomial: ");
+    scanf("%s", gen_poly);
 
-    int len = strlen(data);
-    for (int i = 0; i < 7; i++) {
-        data[len + i] = '0'; // Append 7 zero bits to the data
-    }
-    data[len + 7] = '\0';
+    data_length = strlen(data);
+    strcat(data, "0000000000" + 10 - (N - 1));
 
-    calculateCRC(data, crc);
+    crc();
 
-    printf("CRC: ");
-    for (int i = 0; i < 7; i++) {
-        printf("%c", crc[len + i]);
-    }
-    printf("\n");
+    printf("\nCRC or Check value is: %s", check_value);
+    strncpy(data + data_length, check_value, N - 1);
+
+    printf("\nFinal data to be sent: %s\n", data);
 
     return 0;
 }
