@@ -33,7 +33,11 @@ int main()
     scanf("%s", gen_poly);
 
     data_length = strlen(data);
-    strcat(data, "0000000000" + 10 - (N - 1));
+    for(int i = 1; i< strlen(gen_poly); i++)
+    {
+        strcat(data,"0");
+    }
+    //strcat(data, "0000000000" + 10 - (N - 1));
 
     crc();
 
